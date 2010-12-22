@@ -34,6 +34,7 @@ class TestScriptLoader(unittest.TestCase):
         return path
 
     def test_instance(self):
+        """Test plugin instantiation."""
         from scriptloader import ScriptLoader
 
         scriptloader = ScriptLoader()
@@ -41,6 +42,7 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(scriptloader.name, "scriptloader")
 
     def test_prepareTestLoader(self):
+        """Make sure we get a loader instance."""
         self.plugin.loader = None
         loader = FakeLoader()
 
@@ -49,6 +51,7 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(loader, self.plugin.loader)
 
     def test_loadTestsFromFile(self):
+        """Test loading from a valid script."""
         testfile = self.data("script")
 
         result = self.plugin.loadTestsFromFile(testfile)
@@ -58,6 +61,7 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(spam, None)
 
     def test_loadTestsFromFile_notascript(self):
+        """Test loading from a file that's not a valid script."""
         testfile = self.data("notascript")
 
         result = self.plugin.loadTestsFromFile(testfile)
