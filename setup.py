@@ -5,7 +5,7 @@ from setuptools import setup
 meta = dict(
     name="scriptloader",
     version="0.1.0",
-    description="load nose tests from scripts without the .py extension",
+    description="scriptloader loads scripts (into nose)",
     author="Will Maier",
     author_email="willmaier@ml1.net",
     py_modules=["scriptloader"],
