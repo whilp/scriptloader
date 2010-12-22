@@ -4,6 +4,7 @@ import nose.loader
 import nose.plugins
 
 class ScriptLoader(nose.plugins.Plugin):
+    """Load tests from scripts that may not have a .py extension."""
 
     def options(self, parser, env):
         return nose.plugins.Plugin.options(self, parser, env)

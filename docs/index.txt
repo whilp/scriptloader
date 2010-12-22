@@ -52,3 +52,10 @@ A note about versions
 active development branch. The second, 'stable', contains releases both major
 and minor as well as bugfixes. If you'd like to help improve :mod:`scriptloader`,
 take a look at default/master. Otherwise, stick with stable.
+
+Guts
+----
+
+.. automodule:: scriptloader
+    :members:
+    :show-inheritance:
