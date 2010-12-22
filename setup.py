@@ -3,16 +3,16 @@ import sys
 from setuptools import setup
 
 meta = dict(
-    name="nose-script",
+    name="scriptloader",
     version="0.1.0",
     description="load nose tests from scripts without the .py extension",
     author="Will Maier",
     author_email="willmaier@ml1.net",
-    py_modules=["nosescript"],
+    py_modules=["scriptloader"],
     test_suite="tests",
     install_requires=["setuptools"],
     keywords="nose testing scripts",
-    url="http://packages.python.org/nosescript",
+    url="http://packages.python.org/scriptloader",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -24,7 +24,7 @@ meta = dict(
     ],
     entry_points = {
         'nose.plugins.0.10': [
-            'nosescript = nosescript:NoseScript'
+            'scriptloader = scriptloader:ScriptLoader'
         ]
     },
 )

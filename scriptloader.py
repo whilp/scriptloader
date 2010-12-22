@@ -3,7 +3,7 @@ import imp
 import nose.loader
 import nose.plugins
 
-class NoseScript(nose.plugins.Plugin):
+class ScriptLoader(nose.plugins.Plugin):
 
     def options(self, parser, env):
         return nose.plugins.Plugin.options(self, parser, env)
