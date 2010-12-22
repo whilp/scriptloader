@@ -22,6 +22,11 @@ meta = dict(
         "Programming Language :: Python",
         "Topic :: Software Development :: Testing",
     ],
+    entry_points = {
+        'nose.plugins.0.10': [
+            'nosescript = nosescript:NoseScript'
+        ]
+    },
 )
 
 # Automatic conversion for Python 3 requires distribute.
