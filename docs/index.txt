@@ -42,7 +42,7 @@ importable (like scripts without the '.py' extension). Take a look::
 
 .. _nose:   http://somethingaboutorange.com/mrl/projects/nose/
 
-Installing :mod:`scriptlogger`
+Installing :mod:`scriptloader`
 ------------------------------
 
 .. highlight:: none
