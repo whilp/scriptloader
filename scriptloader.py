@@ -42,7 +42,9 @@ class ScriptLoader(nose.plugins.Plugin):
     def loadTestsFromName(self, name, module=None, discovered=False):
         """Load tests from the entity with the given *name*.
 
-        Attempt to loa
+        If *name* is a filename, attempt to load it using
+        :func:`imp.load_source`. If that succeeds, search for a matching name in
+        the loaded module.
         """
         addr = nose.selector.TestAddress(name, workingDir=self.loader.workingDir)
         path = addr.filename
