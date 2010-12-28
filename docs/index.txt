@@ -12,8 +12,33 @@ scriptloader loads scripts (into nose)
 With :mod:`scriptloader`, you can run nose on files that aren't usually
 importable (like scripts without the '.py' extension). Take a look::
 
-    $ nosetests --with-scriptloader path/to/a/script
-    [...]
+    $ cat /tmp/tests
+    import unittest
+
+    class TestFoo(unittest.TestCase):
+
+        def test_easy(self):
+            self.assertEqual(1 + 1, 2)
+    $ nosetests  /tmp/tests
+    E
+    ======================================================================
+    ERROR: Failure: ValueError (Unable to load tests from file /tmp/tests)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "/home/will/share/venv/2.6/lib/python2.6/site-packages/nose/loader.py", line 206, in loadTestsFromFile
+        % filename)
+    ValueError: Unable to load tests from file /tmp/tests
+
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.003s
+
+    FAILED (errors=1)
+    witten:~ $ nosetests --with-scriptloader /tmp/tests
+    .
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.003s
+
+    OK
 
 .. _nose:   http://somethingaboutorange.com/mrl/projects/nose/
 
