@@ -66,4 +66,12 @@ class TestScriptLoader(unittest.TestCase):
 
         result = self.plugin.loadTestsFromFile(testfile)
 
-        self.assertEqual(result, False)
+        self.assertEqual(result, None)
+
+    def test_loadTestsFromFile_badscript(self):
+        """Test loading from a file that's a script but has syntax errors."""
+        testfile = self.data("badscript")
+
+        result = self.plugin.loadTestsFromFile(testfile)
+
+        self.assertEqual(result, None)
