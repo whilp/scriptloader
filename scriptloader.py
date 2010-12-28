@@ -25,7 +25,7 @@ class ScriptLoader(nose.plugins.Plugin):
 
         Attempt to load the file using :func:`imp.load_source`. If that
         succeeds, pass the loaded module to the :attr:`loader`
-        :meth:`loadTestsFromModule`. If the file can't be loaded, return False
+        :meth:`loadTestsFromModule`. If the file can't be loaded, return None
         so other plugins can try loading it.
         """
         try:
