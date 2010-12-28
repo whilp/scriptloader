@@ -31,6 +31,6 @@ class ScriptLoader(nose.plugins.Plugin):
         try:
             module = imp.load_source("module", filename)
         except SyntaxError:
-            return False
+            return None
 
         return self.loader.loadTestsFromModule(module)
