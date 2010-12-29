@@ -27,8 +27,7 @@ class FakeAddress(object):
 class TestScriptLoader(unittest.TestCase):
 
     def setUp(self):
-        import os
-
+        unittest.TestCase.setUp(self)
         from scriptloader import ScriptLoader
 
         self.plugin = ScriptLoader()
@@ -36,19 +35,21 @@ class TestScriptLoader(unittest.TestCase):
         self.plugin.loader = FakeLoader()
         self.addr = FakeAddress()
 
-        self._data = []
+        self.tmpdir = tempfile.mkdtemp(prefix="scriptloader-test-")
+        self.oldcwd = os.getcwd()
+        os.chdir(self.tmpdir)
 
     def tearDown(self):
-        for fname in self._data:
-            cfile = fname + 'c'
-            if os.path.exists(cfile):
-                os.remove(cfile)
+        unittest.TestCase.tearDown(self)
+        shutil.rmtree(self.tmpdir)
+        os.chdir(self.oldcwd)
 
     def data(self, name):
-        path = os.path.join(TESTDATA, name)
-        self._data.append(path)
+        src = os.path.join(TESTDATA, name)
+        dst = os.path.join(self.tmpdir, name)
+        shutil.copy(src, dst)
 
-        return path
+        return dst
 
     def test_instance(self):
         """Test plugin instantiation."""
