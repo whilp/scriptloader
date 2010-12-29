@@ -14,7 +14,7 @@ except AttributeError:
     class NullHandler(logging.Handler):
         def emit(self, record): pass
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("nose.plugins.%s" % __name__)
 log.addHandler(NullHandler())
 
 class ScriptLoader(nose.plugins.Plugin):
@@ -33,6 +33,7 @@ class ScriptLoader(nose.plugins.Plugin):
         This instance will be used later by :meth:`loadTestsFromFile` if
         necessary.
         """
+        log.debug("saving loader instance")
         self.loader = loader
 
     def loadTestsFromFile(self, filename):
@@ -45,6 +46,7 @@ class ScriptLoader(nose.plugins.Plugin):
         """
         try:
             module = imp.load_source("module", filename)
+            log.debug("loaded module from file %r", filename)
         except SyntaxError:
             return None
 
@@ -68,6 +70,8 @@ class ScriptLoader(nose.plugins.Plugin):
             except SyntaxError:
                 return None
 
+        name = addr.call
+        log.debug("loaded tests from name %s at file %r", name, path)
         self.loadedTestsFromName = True
-        return self.loader.loadTestsFromName(addr.call, module=module,
+        return self.loader.loadTestsFromName(name, module=module,
             discovered=discovered)
