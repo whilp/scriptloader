@@ -9,6 +9,9 @@ class FakeLoader(object):
     def loadTestsFromModule(self, module):
         return module
 
+class FakeAddress(object):
+    pass
+
 class TestScriptLoader(unittest.TestCase):
 
     def setUp(self):
@@ -17,7 +20,9 @@ class TestScriptLoader(unittest.TestCase):
         from scriptloader import ScriptLoader
 
         self.plugin = ScriptLoader()
+        self.plugin.loadedTestsFromName = False
         self.plugin.loader = FakeLoader()
+        self.addr = FakeAddress()
 
         self._data = []
 
@@ -73,5 +78,23 @@ class TestScriptLoader(unittest.TestCase):
         testfile = self.data("badscript")
 
         result = self.plugin.loadTestsFromFile(testfile)
+
+        self.assertEqual(result, None)
+
+    def test_loadTestsFromName_nofilename(self):
+        self.addr.filename = ""
+
+        result = self.plugin.loadTestsFromName("foo", addr=self.addr)
+
+        self.assertEqual(result, None)
+
+    def test_loadTestsFromName_secondtime(self):
+        self.plugin.loadedTestsFromName = True
+        result = self.plugin.loadTestsFromName("foo")
+
+        self.assertEqual(result, None)
+
+    def test_loadTestsFromName_module(self):
+        result = self.plugin.loadTestsFromName("foo", module="a module")
 
         self.assertEqual(result, None)

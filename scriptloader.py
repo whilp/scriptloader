@@ -52,7 +52,8 @@ class ScriptLoader(nose.plugins.Plugin):
 
         return self.loader.loadTestsFromModule(module)
     
-    def loadTestsFromName(self, name, module=None, discovered=False):
+    def loadTestsFromName(self, name, module=None, discovered=False,
+            addr=None, loader=imp.load_source):
         """Load tests from the entity with the given *name*.
 
         If *name* is a filename, attempt to load it using
@@ -62,13 +63,16 @@ class ScriptLoader(nose.plugins.Plugin):
         if module or self.loadedTestsFromName:
             return None
 
-        addr = nose.selector.TestAddress(name, workingDir=self.loader.workingDir)
+        if addr is None: # pragma: nocover
+            addr = nose.selector.TestAddress(name, workingDir=self.loader.workingDir)
         path = addr.filename
-        if path:
-            try:
-                module = imp.load_source("module", path)
-            except SyntaxError:
-                return None
+        if not path:
+            return None
+
+        try:
+            module = loader("module", path)
+        except SyntaxError:
+            return None
 
         name = addr.call
         log.debug("loaded tests from name %s at file %r", name, path)
