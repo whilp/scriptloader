@@ -17,6 +17,9 @@ except AttributeError:
 log = logging.getLogger("nose.plugins.%s" % __name__)
 log.addHandler(NullHandler())
 
+def load_source(name, path):
+    return imp.load_source(name, path)
+
 class ScriptLoader(nose.plugins.Plugin):
     """Load tests from scripts that may not have a .py extension."""
 

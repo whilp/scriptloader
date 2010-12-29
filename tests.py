@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 import unittest
 
 TESTDATA = os.path.join(
@@ -130,3 +132,32 @@ class TestScriptLoader(unittest.TestCase):
         result = self.plugin.loadTestsFromName("foo", module="a module")
 
         self.assertEqual(result, None)
+
+class TestLoadSource(unittest.TestCase):
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        from scriptloader import load_source
+
+        self.load_source = load_source
+        self.tmpdir = tempfile.mkdtemp(prefix="scriptloader-test-")
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        shutil.rmtree(self.tmpdir)
+
+    def data(self, name):
+        src = os.path.join(TESTDATA, name)
+        dst = os.path.join(self.tmpdir, name)
+        shutil.copy(src, dst)
+
+        return dst
+    
+    def test_load_source(self):
+        src = self.data("script")
+        
+        result = self.load_source("script", src)
+
+        self.assertEqual(result.__name__, "script")
+        self.assertEqual(result.__file__, src)
+        self.assertFalse(os.path.isfile(src + "c"))
