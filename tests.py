@@ -4,10 +4,19 @@ import unittest
 TESTDATA = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "testdata")
 
+def fake_load_source(name, path):
+    return FakeModule()
+
+class FakeModule(object):
+    pass
+
 class FakeLoader(object):
 
     def loadTestsFromModule(self, module):
         return module
+
+    def loadTestsFromName(self, name, module=None, discovered=False):
+        return name
 
 class FakeAddress(object):
     pass
@@ -79,6 +88,29 @@ class TestScriptLoader(unittest.TestCase):
 
         result = self.plugin.loadTestsFromFile(testfile)
 
+        self.assertEqual(result, None)
+
+    def test_loadTestsFromName(self):
+        self.addr.filename = "a path"
+        self.addr.call = "call"
+
+        result = self.plugin.loadTestsFromName("foo", addr=self.addr,
+                loader=fake_load_source)
+
+        self.assertEqual(self.plugin.loadedTestsFromName, True)
+        self.assertEqual(result, "call")
+
+    def test_loadTestsFromName_badsyntax(self):
+        self.addr.filename = "a path"
+        self.addr.call = "call"
+
+        def fake_load_bad_source(name, path):
+            raise SyntaxError()
+
+        result = self.plugin.loadTestsFromName("foo", addr=self.addr,
+                loader=fake_load_bad_source)
+
+        self.assertEqual(self.plugin.loadedTestsFromName, False)
         self.assertEqual(result, None)
 
     def test_loadTestsFromName_nofilename(self):
