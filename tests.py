@@ -69,7 +69,7 @@ class TestScriptLoader(unittest.TestCase):
 
         self.assertEqual(result, "module")
 
-    def test_loadTestsFromFile(self):
+    def test_loadTestsFromFile_badsyntax(self):
         """Test loading from a script that raises SyntaxError."""
         def fake_load_bad_source(name, path):
             raise SyntaxError()
