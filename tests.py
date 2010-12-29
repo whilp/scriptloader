@@ -246,3 +246,21 @@ class TestFunctional(unittest.TestCase):
         self.assertTrue("Ran 1 test" in stderr)
         self.assertEqual(proc.returncode, 0)
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
+
+    def test_badscript(self):
+        src = self.data("badscript")
+        proc, stdout, stderr = self.nose("%s" % src)
+
+        self.assertEqual(stdout, "")
+        self.assertTrue("Unable to load tests from file" in stderr)
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
+
+    def test_notascript(self):
+        src = self.data("notascript")
+        proc, stdout, stderr = self.nose("%s" % src)
+
+        self.assertEqual(stdout, "")
+        self.assertTrue("Unable to load tests from file" in stderr)
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
