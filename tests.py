@@ -1,4 +1,5 @@
 import inspect
+import logging
 import os
 import shutil
 import subprocess
@@ -7,6 +8,15 @@ import unittest
 
 TESTDATA = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "testdata")
+
+try:
+    NullHandler = logging.NullHandler
+except AttributeError:
+    class NullHandler(logging.Handler):
+        def emit(self, record): pass
+
+log = logging.getLogger("scriptloader.tests")
+log.addHandler(NullHandler())
 
 def fake_load_source(name, path):
     return name
