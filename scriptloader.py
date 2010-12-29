@@ -1,4 +1,5 @@
 import imp
+import logging
 
 import nose.failure
 import nose.loader
@@ -6,6 +7,15 @@ import nose.plugins
 import nose.selector
 import nose.suite
 import nose.util
+
+try:
+    NullHandler = logging.NullHandler
+except AttributeError:
+    class NullHandler(logging.Handler):
+        def emit(self, record): pass
+
+log = logging.getLogger(__name__)
+log.addHandler(NullHandler())
 
 class ScriptLoader(nose.plugins.Plugin):
     """Load tests from scripts that may not have a .py extension."""
