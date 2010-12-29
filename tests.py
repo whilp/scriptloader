@@ -222,6 +222,4 @@ class TestFunctional(unittest.TestCase):
     def test_plugin(self):
         proc, stdout, stderr = self.nose("-p")
 
-        print stdout
-        print stderr
         self.assertTrue("Plugin scriptloader" in stdout)
