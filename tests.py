@@ -167,17 +167,24 @@ class TestFunctional(unittest.TestCase):
         unittest.TestCase.setUp(self)
 
         self.processes = []
-        self.env = {}
+        self.env = {
+                "PATH": os.environ["PATH"],
+                "LANG": "C",
+        }
         self.tmpdir = tempfile.mkdtemp(prefix="scriptloader-test-")
         self.oldcwd = os.getcwd()
+
+        log.debug("Initializing test directory %r", self.tmpdir)
         os.chdir(self.tmpdir)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
+        log.debug("Cleaning up test directory %r", self.tmpdir)
         shutil.rmtree(self.tmpdir)
         os.chdir(self.oldcwd)
 
         for process in self.processes:
+            log.debug("Reaping test process with PID %d", process.pid)
             try:
                 process.kill()
             except OSError, e:
@@ -194,7 +201,6 @@ class TestFunctional(unittest.TestCase):
     def nose(self, *args, **kwargs):
         _args = ["nosetests"] + list(args)
         _kwargs = {
-            "shell": True,
             "stdin": subprocess.PIPE,
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
@@ -202,6 +208,9 @@ class TestFunctional(unittest.TestCase):
         }
         communicate = kwargs.pop("communicate", True)
         _kwargs.update(kwargs)
+        args = _args
+        kwargs = _kwargs
+        log.debug("Creating test process %r, %r", args, kwargs)
         process = subprocess.Popen(args, **kwargs)
 
         if communicate is True:
@@ -210,9 +219,9 @@ class TestFunctional(unittest.TestCase):
 
         return process
 
-    def test_help(self):
-        proc = self.nose("-h")
-        stdout, stderr = proc.communicate()
+    def test_plugin(self):
+        proc, stdout, stderr = self.nose("-p")
 
-        self.assertTrue("NOSE_WITH_SCRIPTLOADER" in stdout)
-        self.assertTrue("--with-scriptloader" in stdout)
+        print stdout
+        print stderr
+        self.assertTrue("Plugin scriptloader" in stdout)
