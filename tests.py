@@ -236,6 +236,7 @@ class TestFunctional(unittest.TestCase):
         self.assertEqual(stdout, "")
         self.assertTrue("Ran 2 tests" in stderr)
         self.assertEqual(proc.returncode, 0)
+        self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
 
     def test_script_name(self):
         src = self.data("script")
@@ -244,3 +245,4 @@ class TestFunctional(unittest.TestCase):
         self.assertEqual(stdout, "")
         self.assertTrue("Ran 1 test" in stderr)
         self.assertEqual(proc.returncode, 0)
+        self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
