@@ -1,3 +1,4 @@
+import inspect
 import os
 import shutil
 import tempfile
@@ -160,4 +161,5 @@ class TestLoadSource(unittest.TestCase):
 
         self.assertEqual(result.__name__, "script")
         self.assertEqual(result.__file__, src)
+        self.assertEqual(inspect.getfile(result.test_bar), src)
         self.assertFalse(os.path.isfile(src + "c"))
