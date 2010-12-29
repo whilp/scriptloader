@@ -1,5 +1,6 @@
 import imp
 import logging
+import sys
 
 import nose.failure
 import nose.loader
@@ -17,8 +18,24 @@ except AttributeError:
 log = logging.getLogger("nose.plugins.%s" % __name__)
 log.addHandler(NullHandler())
 
-def load_source(name, path):
-    return imp.load_source(name, path)
+def load_source(name, path, bytecode=False):
+    """Load a module from *path*.
+
+    :param bytecode: if False, :data:`sys.dont_write_bytecode` will be set to
+        True (if present). :data:`sys.dont_write_bytecode` is only available in
+        Python >= 2.6.
+    """
+    dont_write_bytecode = getattr(sys, "dont_write_bytecode", None)
+    if dont_write_bytecode is not None and bytecode is False:
+        sys.dont_write_bytecode = True
+
+    try:
+        module = imp.load_source(name, path)
+    finally:
+        if dont_write_bytecode is not None and bytecode is False:
+            sys.dont_write_bytecode = False
+
+    return module
 
 class ScriptLoader(nose.plugins.Plugin):
     """Load tests from scripts that may not have a .py extension."""
@@ -48,7 +65,7 @@ class ScriptLoader(nose.plugins.Plugin):
         so other plugins can try loading it.
         """
         try:
-            module = imp.load_source("module", filename)
+            module = load_source("module", filename)
             log.debug("loaded module from file %r", filename)
         except SyntaxError:
             return None
@@ -56,7 +73,7 @@ class ScriptLoader(nose.plugins.Plugin):
         return self.loader.loadTestsFromModule(module)
     
     def loadTestsFromName(self, name, module=None, discovered=False,
-            addr=None, loader=imp.load_source):
+            addr=None, loader=load_source):
         """Load tests from the entity with the given *name*.
 
         If *name* is a filename, attempt to load it using
