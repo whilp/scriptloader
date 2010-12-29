@@ -4,7 +4,7 @@ from setuptools import setup
 
 meta = dict(
     name="scriptloader",
-    version="0.1.1",
+    version="0.2.0",
     description="scriptloader loads scripts (into nose)",
     author="Will Maier",
     author_email="willmaier@ml1.net",
@@ -14,7 +14,7 @@ meta = dict(
     keywords="nose testing scripts",
     url="http://packages.python.org/scriptloader",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "License :: OSI Approved :: MIT License",
