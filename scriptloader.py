@@ -14,6 +14,7 @@ class ScriptLoader(nose.plugins.Plugin):
         return nose.plugins.Plugin.options(self, parser, env)
 
     def configure(self, options, conf):
+        self.loadedTestsFromName = False
         return nose.plugins.Plugin.configure(self, options, conf)
 
     def prepareTestLoader(self, loader):
@@ -46,28 +47,17 @@ class ScriptLoader(nose.plugins.Plugin):
         :func:`imp.load_source`. If that succeeds, search for a matching name in
         the loaded module.
         """
+        if module or self.loadedTestsFromName:
+            return None
+
         addr = nose.selector.TestAddress(name, workingDir=self.loader.workingDir)
         path = addr.filename
-        if not path:
-            return self.loader.loadTestsFromName(name, module=module, discovered=discovered)
-
-        module = getpackage(path)
-        if module is None:
+        if path:
             try:
                 module = imp.load_source("module", path)
             except SyntaxError:
-                return
+                return None
 
-        suite = self.loader.suiteClass
-        if addr.call:
-            name = addr.call
-        parent, obj = self.loader.resolve(name, module)
-        if (nose.util.isclass(parent)
-                and getattr(parent, '__module__', None) != module.__name__):
-            parent = nose.util.transplant_class(parent, module.__name__)
-            obj = getattr(parent, obj.__name__)
-        if isinstance(obj, nose.failure.Failure):
-            return suite([obj])
-        else:
-            return suite(nose.suite.ContextList([self.loader.makeTest(obj, parent)],
-                context=parent))
+        self.loadedTestsFromName = True
+        return self.loader.loadTestsFromName(addr.call, module=module,
+            discovered=discovered)
