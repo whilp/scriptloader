@@ -81,7 +81,7 @@ class TestScriptLoader(unittest.TestCase):
         self.addr.filename = "a path"
         self.addr.call = "call"
 
-        result = self.plugin.loadTestsFromName("foo", addr=self.addr,
+        result = self.plugin.loadTestsFromName("foo:bar", addr=self.addr,
                 loader=fake_load_source)
 
         self.assertEqual(self.plugin.loadedTestsFromName, True)
@@ -115,6 +115,11 @@ class TestScriptLoader(unittest.TestCase):
 
     def test_loadTestsFromName_module(self):
         result = self.plugin.loadTestsFromName("foo", module="a module")
+
+        self.assertEqual(result, None)
+
+    def test_loadTestsFromName_notaname(self):
+        result = self.plugin.loadTestsFromName("foo")
 
         self.assertEqual(result, None)
 
@@ -223,6 +228,14 @@ class TestFunctional(unittest.TestCase):
         proc, stdout, stderr = self.nose("-p")
 
         self.assertTrue("Plugin scriptloader" in stdout)
+
+    def test_script(self):
+        src = self.data("script")
+        proc, stdout, stderr = self.nose(src)
+
+        self.assertEqual(stdout, "")
+        self.assertTrue("Ran 2 tests" in stderr)
+        self.assertEqual(proc.returncode, 0)
 
     def test_script_name(self):
         src = self.data("script")

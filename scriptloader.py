@@ -82,7 +82,7 @@ class ScriptLoader(nose.plugins.Plugin):
         :func:`imp.load_source`. If that succeeds, search for a matching name in
         the loaded module.
         """
-        if module or self.loadedTestsFromName:
+        if module or self.loadedTestsFromName or ":" not in name:
             return None
 
         if addr is None: # pragma: nocover
