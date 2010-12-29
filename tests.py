@@ -130,7 +130,7 @@ class TestLoadSource(unittest.TestCase):
 
         return dst
     
-    def test_load_source(self):
+    def test_load_source_script(self):
         src = self.data("script")
         
         result = self.load_source("script", src)
@@ -139,3 +139,13 @@ class TestLoadSource(unittest.TestCase):
         self.assertEqual(result.__file__, src)
         self.assertEqual(inspect.getfile(result.test_bar), src)
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
+    
+    def test_load_source_badscript(self):
+        src = self.data("badscript")
+        
+        self.assertRaises(SyntaxError, self.load_source, "badscript", src)
+    
+    def test_load_source_notascript(self):
+        src = self.data("notascript")
+        
+        self.assertRaises(SyntaxError, self.load_source, "notascript", src)
