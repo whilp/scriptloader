@@ -264,3 +264,13 @@ class TestFunctional(unittest.TestCase):
         self.assertTrue("Unable to load tests from file" in stderr)
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
+
+    def test_module(self):
+        src = self.data("amodule.py")
+        proc, stdout, stderr = self.nose("%s" % src)
+
+        self.assertEqual(stdout, "")
+        self.assertTrue("Ran 3 tests" in stderr)
+        self.assertEqual(proc.returncode, 0)
+        basename = os.path.basename(src)
+        self.assertEqual(sorted(os.listdir(self.tmpdir)), [basename, basename + "c"])
