@@ -1,6 +1,7 @@
 import inspect
 import os
 import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -149,3 +150,59 @@ class TestLoadSource(unittest.TestCase):
         src = self.data("notascript")
         
         self.assertRaises(SyntaxError, self.load_source, "notascript", src)
+
+class TestFunctional(unittest.TestCase):
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+
+        self.processes = []
+        self.env = {}
+        self.tmpdir = tempfile.mkdtemp(prefix="scriptloader-test-")
+        self.oldcwd = os.getcwd()
+        os.chdir(self.tmpdir)
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        shutil.rmtree(self.tmpdir)
+        os.chdir(self.oldcwd)
+
+        for process in self.processes:
+            try:
+                process.kill()
+            except OSError, e:
+                if e.errno != 3:
+                    raise
+
+    def data(self, name):
+        src = os.path.join(TESTDATA, name)
+        dst = os.path.join(self.tmpdir, name)
+        shutil.copy(src, dst)
+
+        return dst
+
+    def nose(self, *args, **kwargs):
+        _args = ["nosetests"] + list(args)
+        _kwargs = {
+            "shell": True,
+            "stdin": subprocess.PIPE,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "env": self.env,
+        }
+        communicate = kwargs.pop("communicate", True)
+        _kwargs.update(kwargs)
+        process = subprocess.Popen(args, **kwargs)
+
+        if communicate is True:
+            stdout, stderr = process.communicate()
+            process = (process, stdout, stderr)
+
+        return process
+
+    def test_help(self):
+        proc = self.nose("-h")
+        stdout, stderr = proc.communicate()
+
+        self.assertTrue("NOSE_WITH_SCRIPTLOADER" in stdout)
+        self.assertTrue("--with-scriptloader" in stdout)
