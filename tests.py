@@ -8,7 +8,7 @@ TESTDATA = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "testdata")
 
 def fake_load_source(name, path):
-    return FakeModule()
+    return name
 
 class FakeModule(object):
     pass
@@ -35,22 +35,6 @@ class TestScriptLoader(unittest.TestCase):
         self.plugin.loader = FakeLoader()
         self.addr = FakeAddress()
 
-        self.tmpdir = tempfile.mkdtemp(prefix="scriptloader-test-")
-        self.oldcwd = os.getcwd()
-        os.chdir(self.tmpdir)
-
-    def tearDown(self):
-        unittest.TestCase.tearDown(self)
-        shutil.rmtree(self.tmpdir)
-        os.chdir(self.oldcwd)
-
-    def data(self, name):
-        src = os.path.join(TESTDATA, name)
-        dst = os.path.join(self.tmpdir, name)
-        shutil.copy(src, dst)
-
-        return dst
-
     def test_instance(self):
         """Test plugin instantiation."""
         from scriptloader import ScriptLoader
@@ -70,27 +54,15 @@ class TestScriptLoader(unittest.TestCase):
 
     def test_loadTestsFromFile(self):
         """Test loading from a valid script."""
-        testfile = self.data("script")
+        result = self.plugin.loadTestsFromFile("fake file", loader=fake_load_source)
 
-        result = self.plugin.loadTestsFromFile(testfile)
+        self.assertEqual(result, "module")
 
-        spam = getattr(result, "spam", None)
-        self.assertTrue(hasattr(result, "TestFoo"))
-        self.assertEqual(spam, None)
-
-    def test_loadTestsFromFile_notascript(self):
-        """Test loading from a file that's not a valid script."""
-        testfile = self.data("notascript")
-
-        result = self.plugin.loadTestsFromFile(testfile)
-
-        self.assertEqual(result, None)
-
-    def test_loadTestsFromFile_badscript(self):
-        """Test loading from a file that's a script but has syntax errors."""
-        testfile = self.data("badscript")
-
-        result = self.plugin.loadTestsFromFile(testfile)
+    def test_loadTestsFromFile(self):
+        """Test loading from a script that raises SyntaxError."""
+        def fake_load_bad_source(name, path):
+            raise SyntaxError()
+        result = self.plugin.loadTestsFromFile("fake file", loader=fake_load_bad_source)
 
         self.assertEqual(result, None)
 

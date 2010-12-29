@@ -56,7 +56,7 @@ class ScriptLoader(nose.plugins.Plugin):
         log.debug("saving loader instance")
         self.loader = loader
 
-    def loadTestsFromFile(self, filename):
+    def loadTestsFromFile(self, filename, loader=load_source):
         """Load tests from *filename*.
 
         Attempt to load the file using :func:`imp.load_source`. If that
@@ -65,7 +65,7 @@ class ScriptLoader(nose.plugins.Plugin):
         so other plugins can try loading it.
         """
         try:
-            module = load_source("module", filename)
+            module = loader("module", filename)
             log.debug("loaded module from file %r", filename)
         except SyntaxError:
             return None
