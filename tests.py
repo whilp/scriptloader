@@ -199,7 +199,7 @@ class TestFunctional(unittest.TestCase):
         return dst
 
     def nose(self, *args, **kwargs):
-        _args = ["nosetests"] + list(args)
+        _args = ["nosetests", "--with-scriptloader"] + list(args)
         _kwargs = {
             "stdin": subprocess.PIPE,
             "stdout": subprocess.PIPE,
@@ -223,3 +223,11 @@ class TestFunctional(unittest.TestCase):
         proc, stdout, stderr = self.nose("-p")
 
         self.assertTrue("Plugin scriptloader" in stdout)
+
+    def test_script_name(self):
+        src = self.data("script")
+        proc, stdout, stderr = self.nose("%s:test_bar" % src)
+
+        self.assertEqual(stdout, "")
+        self.assertTrue("Ran 1 test" in stderr)
+        self.assertEqual(proc.returncode, 0)
