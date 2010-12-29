@@ -42,6 +42,13 @@ importable (like scripts without the '.py' extension). Take a look::
 
 .. _nose:   http://somethingaboutorange.com/mrl/projects/nose/
 
+.. note::
+    When run with Python interpreters that don't support
+    :data:`sys.dont_write_bytecode` (ie, Python versions < 2.6), this plugin may
+    cause a file named like the script under test with a 'c' extension to be
+    created as a side effect of testing. See :func:`load_source` for more
+    information.
+
 Installing :mod:`scriptloader`
 ------------------------------
 
