@@ -24,6 +24,8 @@ def load_source(name, path, bytecode=False):
     :param bytecode: if False, :data:`sys.dont_write_bytecode` will be set to
         True (if present). :data:`sys.dont_write_bytecode` is only available in
         Python >= 2.6.
+
+    .. versionadded:: 0.2.0
     """
     dont_write_bytecode = getattr(sys, "dont_write_bytecode", None)
     if dont_write_bytecode is not None and bytecode is False:
