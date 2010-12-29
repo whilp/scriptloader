@@ -142,10 +142,13 @@ class TestLoadSource(unittest.TestCase):
 
         self.load_source = load_source
         self.tmpdir = tempfile.mkdtemp(prefix="scriptloader-test-")
+        self.oldcwd = os.getcwd()
+        os.chdir(self.tmpdir)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
         shutil.rmtree(self.tmpdir)
+        os.chdir(self.oldcwd)
 
     def data(self, name):
         src = os.path.join(TESTDATA, name)
@@ -162,4 +165,4 @@ class TestLoadSource(unittest.TestCase):
         self.assertEqual(result.__name__, "script")
         self.assertEqual(result.__file__, src)
         self.assertEqual(inspect.getfile(result.test_bar), src)
-        self.assertFalse(os.path.isfile(src + "c"))
+        self.assertEqual(os.listdir(self.tmpdir), os.path.basename(src))
