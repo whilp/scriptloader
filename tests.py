@@ -78,6 +78,7 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(result, None)
 
     def test_loadTestsFromName(self):
+        """Test loading by name."""
         self.addr.filename = "a path"
         self.addr.call = "call"
 
@@ -88,6 +89,7 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(result, "call")
 
     def test_loadTestsFromName_badsyntax(self):
+        """Test loading by name when the script raises a SyntaxError."""
         self.addr.filename = "a path"
         self.addr.call = "call"
 
@@ -101,6 +103,7 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(result, None)
 
     def test_loadTestsFromName_nofilename(self):
+        """Test loading by name when the file has no filename."""
         self.addr.filename = ""
 
         result = self.plugin.loadTestsFromName("foo", addr=self.addr)
@@ -108,17 +111,20 @@ class TestScriptLoader(unittest.TestCase):
         self.assertEqual(result, None)
 
     def test_loadTestsFromName_secondtime(self):
+        """Test repeatedly loading by name."""
         self.plugin.loadedTestsFromName = True
         result = self.plugin.loadTestsFromName("foo")
 
         self.assertEqual(result, None)
 
     def test_loadTestsFromName_module(self):
+        """Test loading by name from a regular old module."""
         result = self.plugin.loadTestsFromName("foo", module="a module")
 
         self.assertEqual(result, None)
 
     def test_loadTestsFromName_notaname(self):
+        """Test loading by a name that's not actually a name."""
         result = self.plugin.loadTestsFromName("foo")
 
         self.assertEqual(result, None)
@@ -147,6 +153,7 @@ class TestLoadSource(unittest.TestCase):
         return dst
     
     def test_load_source_script(self):
+        """Test loading a script (sans .py extension)."""
         src = self.data("script")
         
         result = self.load_source("script", src)
@@ -157,11 +164,13 @@ class TestLoadSource(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
     
     def test_load_source_badscript(self):
+        """Test loading a broken script."""
         src = self.data("badscript")
         
         self.assertRaises(SyntaxError, self.load_source, "badscript", src)
     
     def test_load_source_notascript(self):
+        """Test loading something that isn't a script at all."""
         src = self.data("notascript")
         
         self.assertRaises(SyntaxError, self.load_source, "notascript", src)
@@ -225,11 +234,13 @@ class TestFunctional(unittest.TestCase):
         return process
 
     def test_plugin(self):
+        """Check that the plugin is registered."""
         proc, stdout, stderr = self.nose("-p")
 
         self.assertTrue("Plugin scriptloader" in stdout)
 
     def test_script(self):
+        """Run tests from a script."""
         src = self.data("script")
         proc, stdout, stderr = self.nose(src)
 
@@ -239,6 +250,7 @@ class TestFunctional(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
 
     def test_script_name(self):
+        """Run a test by name within a script."""
         src = self.data("script")
         proc, stdout, stderr = self.nose("%s:test_bar" % src)
 
@@ -248,6 +260,7 @@ class TestFunctional(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
 
     def test_badscript(self):
+        """Try running a bad script."""
         src = self.data("badscript")
         proc, stdout, stderr = self.nose("%s" % src)
 
@@ -257,6 +270,7 @@ class TestFunctional(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
 
     def test_notascript(self):
+        """Try running something that's not a script at all."""
         src = self.data("notascript")
         proc, stdout, stderr = self.nose("%s" % src)
 
@@ -266,6 +280,7 @@ class TestFunctional(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpdir), [os.path.basename(src)])
 
     def test_module(self):
+        """Test a module."""
         src = self.data("amodule.py")
         proc, stdout, stderr = self.nose("%s" % src)
 
