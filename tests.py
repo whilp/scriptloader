@@ -67,7 +67,7 @@ class TestScriptLoader(unittest.TestCase):
         """Test loading from a valid script."""
         result = self.plugin.loadTestsFromFile("fake file", loader=fake_load_source)
 
-        self.assertEqual(result, "module")
+        self.assertEqual(result, "fake file")
 
     def test_loadTestsFromFile_badsyntax(self):
         """Test loading from a script that raises SyntaxError."""

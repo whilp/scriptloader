@@ -1,5 +1,7 @@
 import imp
+import inspect
 import logging
+import os
 import sys
 
 import nose.failure
@@ -66,9 +68,12 @@ class ScriptLoader(nose.plugins.Plugin):
         :meth:`loadTestsFromModule`. If the file can't be loaded, return None
         so other plugins can try loading it.
         """
+        name = inspect.getmodulename(filename)
+        if not name:
+            name = os.path.basename(filename)
         try:
-            module = loader("module", filename)
-            log.debug("loaded module from file %r", filename)
+            module = loader(name, filename)
+            log.debug("loaded module %r from file %r", name, filename)
         except SyntaxError:
             return None
 
